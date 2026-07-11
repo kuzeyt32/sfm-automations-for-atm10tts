@@ -10,7 +10,7 @@ Every tick do
 End
 
 -- ============================================
--- ITEMS: Process every second (20 ticks)
+-- ITEMS: Process every 30 ticks (1.5 seconds)
 -- ============================================
 Every 30 ticks do
     -- FLUID: Provide water to Reaction Chamber from Sink
@@ -18,78 +18,49 @@ Every 30 ticks do
     Output fluid:: to ReactionChamber
 
     -- ============================================
-    -- CRYSTAL PRODUCTION — Each recipe in its own Forget block
-    -- Only ONE recipe per chamber per tick (3 chambers = up to 3 recipes)
-    -- Extraction moved to END so chambers are cleared AFTER filling
+    -- CRYSTAL PRODUCTION — Else If chain ensures only ONE recipe per cycle
+    -- Priority: Certus Recovery > Charge Certus > Fluix > Entro
+    -- All use slots 0-1, no conflicts since only one runs at a time
     -- ============================================
-
-    -- Forget #1: CERTUS QUARTZ CRYSTAL (Recover from charged + dust) — PRIORITY
-    -- Regular certus is more important: needed to make charged certus
-    -- Recipe: Charged Certus Quartz Crystal + Certus Quartz Dust -> Certus Quartz Crystal
-    -- Machine processes 16 charged certus at a time, outputs 64 regular certus
-    -- Cap: Stop when regular certus reaches 100k
     Forget
-        if Barrel has lt 100000 ae2:certus_quartz_crystal then
-            if Barrel has ge 16 ae2:charged_certus_quartz_crystal then
-                if Barrel has ge 16 ae2:certus_quartz_dust then
-                    Input ae2:charged_certus_quartz_crystal from Barrel
-                    Output retain 16 ae2:charged_certus_quartz_crystal to each ReactionChamber slots 0
-                    Input ae2:certus_quartz_dust from Barrel
-                    Output retain 16 ae2:certus_quartz_dust to each ReactionChamber slots 1
-                end
-            end
-        end
+        -- CERTUS QUARTZ CRYSTAL (Recover from charged + dust) — PRIORITY
+        -- Regular certus is more important: needed to make charged certus
+        If Barrel has lt 100000 ae2:certus_quartz_crystal and
+                Barrel has ge 16 ae2:charged_certus_quartz_crystal and
+                Barrel has ge 16 ae2:certus_quartz_dust then
+            Input ae2:charged_certus_quartz_crystal from Barrel
+            Output retain 16 ae2:charged_certus_quartz_crystal to each ReactionChamber slots 0
+            Input ae2:certus_quartz_dust from Barrel
+            Output retain 16 ae2:certus_quartz_dust to each ReactionChamber slots 1
 
-    -- Forget #2: CHARGED CERTUS QUARTZ
-    -- Only charge regular certus AFTER recovery is satisfied
-    -- Recipe: Certus Quartz Crystal -> Charged Certus Quartz Crystal
-    -- Requires 64 certus per craft (machine only processes at 64)
-    -- Cap: Stop when charged certus reaches 100k
-    Forget
-        if Barrel has lt 100000 ae2:charged_certus_quartz_crystal then
-            if Barrel has ge 64 ae2:certus_quartz_crystal then
-                Input ae2:certus_quartz_crystal from Barrel
-                Output retain 64 ae2:certus_quartz_crystal to each ReactionChamber slots 0
-            end
-        end
+        -- CHARGED CERTUS QUARTZ
+        Else If Barrel has lt 100000 ae2:charged_certus_quartz_crystal and
+                Barrel has ge 64 ae2:certus_quartz_crystal then
+            Input ae2:certus_quartz_crystal from Barrel
+            Output retain 64 ae2:certus_quartz_crystal to each ReactionChamber slots 0
 
-    -- Forget #3: FLUIX CRYSTAL
-    -- Recipe: Fluix Dust + Charged Certus Quartz Crystal -> Fluix Crystal
-    -- Cap: Stop when fluix crystal reaches 100k
-    Forget
-        if Barrel has lt 100000 ae2:fluix_crystal then
-            if Barrel has ge 32 ae2:fluix_dust then
-                if Barrel has ge 32 ae2:charged_certus_quartz_crystal then
-                    Input ae2:fluix_dust from Barrel
-                    Output retain 32 ae2:fluix_dust to each ReactionChamber slots 0
-                    Input ae2:charged_certus_quartz_crystal from Barrel
-                    Output retain 32 ae2:charged_certus_quartz_crystal to each ReactionChamber slots 1
-                end
-            end
-        end
+        -- FLUIX CRYSTAL
+        Else If Barrel has lt 100000 ae2:fluix_crystal and
+                Barrel has ge 32 ae2:fluix_dust and
+                Barrel has ge 32 ae2:charged_certus_quartz_crystal then
+            Input ae2:fluix_dust from Barrel
+            Output retain 32 ae2:fluix_dust to each ReactionChamber slots 0
+            Input ae2:charged_certus_quartz_crystal from Barrel
+            Output retain 32 ae2:charged_certus_quartz_crystal to each ReactionChamber slots 1
 
-    -- Forget #4: ENTRO CRYSTAL
-    -- Recipe: Entro Dust + Fluix Crystal -> Entro Crystal
-    -- Cap: Stop when entro crystal reaches 100k
-    -- Buffer: Waits until 320+ fluix crystals before consuming (prevents starving fluix)
-    -- Places fluix FIRST (harder requirement) so if it fails, entro dust isn't orphaned
-    Forget
-        if Barrel has lt 100000 extendedae:entro_crystal then
-            if Barrel has ge 32 extendedae:entro_dust then
-                if Barrel has ge 320 ae2:fluix_crystal then
-                    Input ae2:fluix_crystal from Barrel
-                    Output retain 32 ae2:fluix_crystal to each ReactionChamber slots 0
-                    Input extendedae:entro_dust from Barrel
-                    Output retain 32 extendedae:entro_dust to each ReactionChamber slots 1
-                end
-            end
-        end
+        -- ENTRO CRYSTAL
+        -- Buffer: Waits until 320+ fluix crystals before consuming
+        Else If Barrel has lt 100000 extendedae:entro_crystal and
+                Barrel has ge 32 extendedae:entro_dust and
+                Barrel has ge 320 ae2:fluix_crystal then
+            Input ae2:fluix_crystal from Barrel
+            Output retain 32 ae2:fluix_crystal to each ReactionChamber slots 0
+            Input extendedae:entro_dust from Barrel
+            Output retain 32 extendedae:entro_dust to each ReactionChamber slots 1
+        End
 
     -- ============================================
-    -- CRUSHING (Forget #5): Fluix crystal -> Fluix dust
-    -- PRIORITY: Runs first so fluix gets crusher space before entro
-    -- Only crushes when we have surplus crystals AND need dust
-    -- Input via top side to avoid clogging output side
+    -- CRUSHING: Fluix crystal -> Fluix dust (PRIORITY)
     -- ============================================
     Forget
         if Barrel has gt 32 ae2:fluix_crystal then
@@ -100,9 +71,7 @@ Every 30 ticks do
         end
 
     -- ============================================
-    -- CRUSHING (Forget #6): Entro crystal -> Entro dust
-    -- LOW PRIORITY: Runs after fluix crushing to avoid blocking fluix
-    -- Only crushes when we have surplus crystals AND need dust
+    -- CRUSHING: Entro crystal -> Entro dust (LOW PRIORITY)
     -- ============================================
     Forget
         if Barrel has gt 32 extendedae:entro_crystal then
@@ -113,9 +82,7 @@ Every 30 ticks do
         end
 
     -- ============================================
-    -- EXTRACTION (Forget #7): Pull finished products at END of cycle
-    -- Runs AFTER all production/crushing so chambers are cleared
-    -- for the next tick, preventing mixed-recipe clogging
+    -- EXTRACTION: Pull finished products at END of cycle
     -- ============================================
     Forget
         Input from each ReactionChamber bottom side
