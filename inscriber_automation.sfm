@@ -1,94 +1,111 @@
 Name "AE2 Inscriber Automation"
 
+-- ============================================
+-- POWER: Distribute FE to all inscribers
+-- ============================================
 Every tick do
     Input fe:: from EnderCell
     Output fe:: to each Inscriber top side
 End
 
+-- ============================================
+-- ITEMS: Process every second (20 ticks)
+-- ============================================
 Every 20 ticks do
+    -- REQUIRED: Extract finished products from all inscribers
     Input from each Print_Inscriber slots 3
     Input from each Assembly_Inscriber slots 3
     Output to Barrel
 
+    -- ============================================
+    -- PRINTING (Forget #1): Print_Inscriber group
+    -- Universal Press stays in slot 0 manually
+    -- Material goes to slot 2, output from slot 3
+    -- Else If chain: only ONE print job per cycle
+    -- Priority: base materials first
+    -- ============================================
     Forget
-        if Barrel has lt 64 ae2:printed_silicon then
-            if Barrel has ge 1 ae2:silicon then
-                Input ae2:silicon from Barrel
-                Output retain 1 ae2:silicon to each Print_Inscriber slots 2
-            end
-        end
-        if Barrel has lt 64 ae2:printed_logic_processor then
-            if Barrel has ge 1 gold_ingot then
-                Input gold_ingot from Barrel
-                Output retain 1 gold_ingot to each Print_Inscriber slots 2
-            end
-        end
-        if Barrel has lt 64 ae2:printed_calculation_processor then
-            if Barrel has ge 1 ae2:certus_quartz_crystal then
-                Input ae2:certus_quartz_crystal from Barrel
-                Output retain 1 ae2:certus_quartz_crystal to each Print_Inscriber slots 2
-            end
-        end
-        if Barrel has lt 64 ae2:printed_engineering_processor then
-            if Barrel has ge 1 diamond then
-                Input diamond from Barrel
-                Output retain 1 diamond to each Print_Inscriber slots 2
-            end
-        end
-        if Barrel has lt 64 extendedae:concurrent_processor_print then
-            if Barrel has ge 1 extendedae:entro_crystal then
-                Input extendedae:entro_crystal from Barrel
-                Output retain 1 extendedae:entro_crystal to each Print_Inscriber slots 2
-            end
+        -- Printed Silicon (base for all processors)
+        if Barrel has lt 64 ae2:printed_silicon and
+                Barrel has ge 1 ae2:silicon then
+            Input ae2:silicon from Barrel
+            Output retain 1 ae2:silicon to each Print_Inscriber slots 2
+
+        -- Printed Logic Circuit
+        else if Barrel has lt 64 ae2:printed_logic_processor and
+                Barrel has ge 1 gold_ingot then
+            Input gold_ingot from Barrel
+            Output retain 1 gold_ingot to each Print_Inscriber slots 2
+
+        -- Printed Calculation Circuit
+        else if Barrel has lt 64 ae2:printed_calculation_processor and
+                Barrel has ge 1 ae2:certus_quartz_crystal then
+            Input ae2:certus_quartz_crystal from Barrel
+            Output retain 1 ae2:certus_quartz_crystal to each Print_Inscriber slots 2
+
+        -- Printed Engineering Circuit
+        else if Barrel has lt 64 ae2:printed_engineering_processor and
+                Barrel has ge 1 diamond then
+            Input diamond from Barrel
+            Output retain 1 diamond to each Print_Inscriber slots 2
+
+        -- Printed Concurrent Circuit (ExtendedAE)
+        else if Barrel has lt 64 extendedae:concurrent_processor_print and
+                Barrel has ge 1 extendedae:entro_crystal then
+            Input extendedae:entro_crystal from Barrel
+            Output retain 1 extendedae:entro_crystal to each Print_Inscriber slots 2
         end
 
+    -- ============================================
+    -- ASSEMBLY (Forget #2): Assembly_Inscriber group
+    -- Top=Printed Circuit (slot 0), Bottom=Printed Silicon (slot 1)
+    -- Middle="redstone" (slot 2), Output (slot 3)
+    -- Else If chain: only ONE assembly job per cycle
+    -- Priority: basic processors first
+    -- ============================================
     Forget
-        if Barrel has ge 1 ae2:printed_logic_processor then
-            if Barrel has ge 1 ae2:printed_silicon then
-                if Barrel has ge 1 redstone then
-                    Input ae2:printed_logic_processor from Barrel
-                    Output retain 1 ae2:printed_logic_processor to each Assembly_Inscriber slots 0
-                    Input ae2:printed_silicon from Barrel
-                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
-                    Input redstone from Barrel
-                    Output retain 1 redstone to each Assembly_Inscriber slots 2
-                end
-            end
-        end
-        if Barrel has ge 1 ae2:printed_calculation_processor then
-            if Barrel has ge 1 ae2:printed_silicon then
-                if Barrel has ge 1 redstone then
-                    Input ae2:printed_calculation_processor from Barrel
-                    Output retain 1 ae2:printed_calculation_processor to each Assembly_Inscriber slots 0
-                    Input ae2:printed_silicon from Barrel
-                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
-                    Input redstone from Barrel
-                    Output retain 1 redstone to each Assembly_Inscriber slots 2
-                end
-            end
-        end
-        if Barrel has ge 1 ae2:printed_engineering_processor then
-            if Barrel has ge 1 ae2:printed_silicon then
-                if Barrel has ge 1 redstone then
-                    Input ae2:printed_engineering_processor from Barrel
-                    Output retain 1 ae2:printed_engineering_processor to each Assembly_Inscriber slots 0
-                    Input ae2:printed_silicon from Barrel
-                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
-                    Input redstone from Barrel
-                    Output retain 1 redstone to each Assembly_Inscriber slots 2
-                end
-            end
-        end
-        if Barrel has ge 1 extendedae:concurrent_processor_print then
-            if Barrel has ge 1 ae2:printed_silicon then
-                if Barrel has ge 1 redstone then
-                    Input extendedae:concurrent_processor_print from Barrel
-                    Output retain 1 extendedae:concurrent_processor_print to each Assembly_Inscriber slots 0
-                    Input ae2:printed_silicon from Barrel
-                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
-                    Input redstone from Barrel
-                    Output retain 1 redstone to each Assembly_Inscriber slots 2
-                end
-            end
+        -- Logic Processor
+        if Barrel has ge 1 ae2:printed_logic_processor and
+                Barrel has ge 1 ae2:printed_silicon and
+                Barrel has ge 1 "redstone" then
+            Input ae2:printed_logic_processor from Barrel
+            Output retain 1 ae2:printed_logic_processor to each Assembly_Inscriber slots 0
+            Input ae2:printed_silicon from Barrel
+            Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+            Input "redstone" from Barrel
+            Output retain 1 "redstone" to each Assembly_Inscriber slots 2
+
+        -- Calculation Processor
+        else if Barrel has ge 1 ae2:printed_calculation_processor and
+                Barrel has ge 1 ae2:printed_silicon and
+                Barrel has ge 1 "redstone" then
+            Input ae2:printed_calculation_processor from Barrel
+            Output retain 1 ae2:printed_calculation_processor to each Assembly_Inscriber slots 0
+            Input ae2:printed_silicon from Barrel
+            Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+            Input "redstone" from Barrel
+            Output retain 1 "redstone" to each Assembly_Inscriber slots 2
+
+        -- Engineering Processor
+        else if Barrel has ge 1 ae2:printed_engineering_processor and
+                Barrel has ge 1 ae2:printed_silicon and
+                Barrel has ge 1 "redstone" then
+            Input ae2:printed_engineering_processor from Barrel
+            Output retain 1 ae2:printed_engineering_processor to each Assembly_Inscriber slots 0
+            Input ae2:printed_silicon from Barrel
+            Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+            Input "redstone" from Barrel
+            Output retain 1 "redstone" to each Assembly_Inscriber slots 2
+
+        -- Concurrent Processor (ExtendedAE)
+        else if Barrel has ge 1 extendedae:concurrent_processor_print and
+                Barrel has ge 1 ae2:printed_silicon and
+                Barrel has ge 1 "redstone" then
+            Input extendedae:concurrent_processor_print from Barrel
+            Output retain 1 extendedae:concurrent_processor_print to each Assembly_Inscriber slots 0
+            Input ae2:printed_silicon from Barrel
+            Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+            Input "redstone" from Barrel
+            Output retain 1 "redstone" to each Assembly_Inscriber slots 2
         end
 End
