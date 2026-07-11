@@ -1,0 +1,94 @@
+Name "AE2 Inscriber Automation"
+
+Every tick do
+    Input fe:: from EnderCell
+    Output fe:: to each Inscriber top side
+End
+
+Every 20 ticks do
+    Input from each Print_Inscriber slots 3
+    Input from each Assembly_Inscriber slots 3
+    Output to Barrel
+
+    Forget
+        if Barrel has lt 64 ae2:printed_silicon then
+            if Barrel has ge 1 ae2:silicon then
+                Input ae2:silicon from Barrel
+                Output retain 1 ae2:silicon to each Print_Inscriber slots 2
+            end
+        end
+        if Barrel has lt 64 ae2:printed_logic_processor then
+            if Barrel has ge 1 gold_ingot then
+                Input gold_ingot from Barrel
+                Output retain 1 gold_ingot to each Print_Inscriber slots 2
+            end
+        end
+        if Barrel has lt 64 ae2:printed_calculation_processor then
+            if Barrel has ge 1 ae2:certus_quartz_crystal then
+                Input ae2:certus_quartz_crystal from Barrel
+                Output retain 1 ae2:certus_quartz_crystal to each Print_Inscriber slots 2
+            end
+        end
+        if Barrel has lt 64 ae2:printed_engineering_processor then
+            if Barrel has ge 1 diamond then
+                Input diamond from Barrel
+                Output retain 1 diamond to each Print_Inscriber slots 2
+            end
+        end
+        if Barrel has lt 64 extendedae:concurrent_processor_print then
+            if Barrel has ge 1 extendedae:entro_crystal then
+                Input extendedae:entro_crystal from Barrel
+                Output retain 1 extendedae:entro_crystal to each Print_Inscriber slots 2
+            end
+        end
+
+    Forget
+        if Barrel has ge 1 ae2:printed_logic_processor then
+            if Barrel has ge 1 ae2:printed_silicon then
+                if Barrel has ge 1 redstone then
+                    Input ae2:printed_logic_processor from Barrel
+                    Output retain 1 ae2:printed_logic_processor to each Assembly_Inscriber slots 0
+                    Input ae2:printed_silicon from Barrel
+                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+                    Input redstone from Barrel
+                    Output retain 1 redstone to each Assembly_Inscriber slots 2
+                end
+            end
+        end
+        if Barrel has ge 1 ae2:printed_calculation_processor then
+            if Barrel has ge 1 ae2:printed_silicon then
+                if Barrel has ge 1 redstone then
+                    Input ae2:printed_calculation_processor from Barrel
+                    Output retain 1 ae2:printed_calculation_processor to each Assembly_Inscriber slots 0
+                    Input ae2:printed_silicon from Barrel
+                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+                    Input redstone from Barrel
+                    Output retain 1 redstone to each Assembly_Inscriber slots 2
+                end
+            end
+        end
+        if Barrel has ge 1 ae2:printed_engineering_processor then
+            if Barrel has ge 1 ae2:printed_silicon then
+                if Barrel has ge 1 redstone then
+                    Input ae2:printed_engineering_processor from Barrel
+                    Output retain 1 ae2:printed_engineering_processor to each Assembly_Inscriber slots 0
+                    Input ae2:printed_silicon from Barrel
+                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+                    Input redstone from Barrel
+                    Output retain 1 redstone to each Assembly_Inscriber slots 2
+                end
+            end
+        end
+        if Barrel has ge 1 extendedae:concurrent_processor_print then
+            if Barrel has ge 1 ae2:printed_silicon then
+                if Barrel has ge 1 redstone then
+                    Input extendedae:concurrent_processor_print from Barrel
+                    Output retain 1 extendedae:concurrent_processor_print to each Assembly_Inscriber slots 0
+                    Input ae2:printed_silicon from Barrel
+                    Output retain 1 ae2:printed_silicon to each Assembly_Inscriber slots 1
+                    Input redstone from Barrel
+                    Output retain 1 redstone to each Assembly_Inscriber slots 2
+                end
+            end
+        end
+End
