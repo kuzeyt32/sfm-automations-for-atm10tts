@@ -1,0 +1,95 @@
+Name "Energizing Orb"
+
+-- ============================================
+-- Energizing Orb Automation
+-- Originally from "The Voos" YouTube channel
+-- Processes items through the Energizing Orb
+-- Only sends a recipe if Orb is empty (has eq 0)
+-- ============================================
+Every 20 ticks do
+    -- REQUIRED: Extract finished products from Orb back to Barrel
+    Input from Orb bottom side
+    Output to Barrel
+
+    -- ENDER CORE
+    Forget
+        if Barrel has ge 1 ender_eye then
+            if Barrel has ge 1 dielectric_casing then
+                if Barrel has ge 1 capacitor_basic_tiny then
+                    if Orb has eq 0 then
+                        Input 1 ender_eye, 1 dielectric_casing, 1 capacitor_basic_tiny from Barrel
+                        Output retain 1 ender_eye, 1 dielectric_casing, 1 capacitor_basic_tiny to Orb
+                    end
+                end
+            end
+        end
+
+    -- CHARGED CERTUS
+    Forget
+        if Barrel has ge 1 certus_quartz_crystal then
+            if Orb has eq 0 then
+                Input certus_quartz_crystal from Barrel
+                Output to Orb
+            end
+        end
+
+    -- ENERGIZED STEEL
+    Forget
+        if Barrel has ge 1 iron_ingot then
+            if Barrel has ge 1 gold_ingot then
+                if Orb has eq 0 then
+                    Input 1 iron_ingot, 1 gold_ingot from Barrel
+                    Output retain 1 iron_ingot, 1 gold_ingot to Orb
+                end
+            end
+        end
+
+    -- BLAZE POWDER
+    Forget
+        if Barrel has ge 4 blaze_powder then
+            if Orb has eq 0 then
+                Input 4 blaze_powder from Barrel
+                Output retain 4 blaze_powder to Orb
+            end
+        end
+
+    -- BLAZE ROD
+    Forget
+        if Barrel has ge 1 blaze_rod then
+            if Orb has eq 0 then
+                Input 1 blaze_rod from Barrel
+                Output retain 1 blaze_rod to Orb
+            end
+        end
+
+    -- NIOTIC CRYSTAL
+    Forget
+        if Barrel has ge 1 diamond then
+            if Orb has eq 0 then
+                Input 1 diamond from Barrel
+                Output retain 1 diamond to Orb
+            end
+        end
+
+    -- SPIRITED CRYSTAL
+    Forget
+        if Barrel has ge 1 emerald then
+            if Orb has eq 0 then
+                Input 1 emerald from Barrel
+                Output retain 1 emerald to Orb
+            end
+        end
+
+    -- NITRO CRYSTAL
+    Forget
+        if Barrel has ge 1 nether_star then
+            if Barrel has ge 2 redstone_block then
+                if Barrel has ge 1 blazing_crystal_block then
+                    if Orb has eq 0 then
+                        Input 1 nether_star, 2 redstone_block, 1 blazing_crystal_block from Barrel
+                        Output retain 1 nether_star, 2 redstone_block, 1 blazing_crystal_block to Orb
+                    end
+                end
+            end
+        end
+End
