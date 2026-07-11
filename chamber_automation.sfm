@@ -1,0 +1,13 @@
+Name "Chamber Automation"
+
+-- ============================================
+-- Generic Chamber Processor
+-- Takes any 9 items from barrel, sends to chambers,
+-- extracts source_gem outputs back to barrel
+-- ============================================
+Every 20 ticks do
+    Input 9 item:: from Barrel
+    Output item:: to each Chamber top side
+    Input item::source_gem from each Chamber bottom side
+    Output item:: to Barrel
+End
