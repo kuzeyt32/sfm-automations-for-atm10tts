@@ -6,7 +6,7 @@ Name "Fluix and Entro Crystal Automation"
 Every tick do
     Input fe:: from EnderCell
     Output fe:: to each ReactionChamber
-    Output fe:: to each Crusher
+    Output fe:: to each Crusher back side
 End
 
 -- ============================================
