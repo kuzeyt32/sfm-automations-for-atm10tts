@@ -25,24 +25,24 @@ Every 30 ticks do
     Forget
         -- CERTUS QUARTZ CRYSTAL (Recover from charged + dust) — PRIORITY
         -- Regular certus is the base of everything: needed to make charged certus
-        if Barrel has lt 100000 ae2:certus_quartz_crystal and
-                Barrel has ge 16 ae2:charged_certus_quartz_crystal and
-                Barrel has ge 16 ae2:certus_quartz_dust then
+        if Barrel has < 100000 ae2:certus_quartz_crystal and
+                Barrel has >= 16 ae2:charged_certus_quartz_crystal and
+                Barrel has >= 16 ae2:certus_quartz_dust then
             Input ae2:charged_certus_quartz_crystal from Barrel
             Output retain 16 ae2:charged_certus_quartz_crystal to each ReactionChamber slots 0
             Input ae2:certus_quartz_dust from Barrel
             Output retain 16 ae2:certus_quartz_dust to each ReactionChamber slots 1
 
         -- CHARGED CERTUS QUARTZ
-        else if Barrel has lt 100000 ae2:charged_certus_quartz_crystal and
-                Barrel has ge 64 ae2:certus_quartz_crystal then
+        else if Barrel has < 100000 ae2:charged_certus_quartz_crystal and
+                Barrel has >= 64 ae2:certus_quartz_crystal then
             Input ae2:certus_quartz_crystal from Barrel
             Output retain 64 ae2:certus_quartz_crystal to each ReactionChamber slots 0
 
         -- FLUIX CRYSTAL
-        else if Barrel has lt 100000 ae2:fluix_crystal and
-                Barrel has ge 32 ae2:fluix_dust and
-                Barrel has ge 32 ae2:charged_certus_quartz_crystal then
+        else if Barrel has < 100000 ae2:fluix_crystal and
+                Barrel has >= 32 ae2:fluix_dust and
+                Barrel has >= 32 ae2:charged_certus_quartz_crystal then
             Input ae2:fluix_dust from Barrel
             Output retain 32 ae2:fluix_dust to each ReactionChamber slots 0
             Input ae2:charged_certus_quartz_crystal from Barrel
@@ -50,9 +50,9 @@ Every 30 ticks do
 
         -- ENTRO CRYSTAL
         -- Buffer: Waits until 320+ fluix crystals before consuming
-        else if Barrel has lt 100000 extendedae:entro_crystal and
-                Barrel has ge 32 extendedae:entro_dust and
-                Barrel has ge 320 ae2:fluix_crystal then
+        else if Barrel has < 100000 extendedae:entro_crystal and
+                Barrel has >= 32 extendedae:entro_dust and
+                Barrel has >= 320 ae2:fluix_crystal then
             Input ae2:fluix_crystal from Barrel
             Output retain 32 ae2:fluix_crystal to each ReactionChamber slots 0
             Input extendedae:entro_dust from Barrel
@@ -63,8 +63,8 @@ Every 30 ticks do
     -- CRUSHING: Fluix crystal -> Fluix dust (PRIORITY)
     -- ============================================
     Forget
-        if Barrel has gt 32 ae2:fluix_crystal then
-            if Barrel has lt 100000 ae2:fluix_dust then
+        if Barrel has > 32 ae2:fluix_crystal then
+            if Barrel has < 100000 ae2:fluix_dust then
                 Input ae2:fluix_crystal from Barrel
                 Output to each Crusher top side
             end
@@ -74,8 +74,8 @@ Every 30 ticks do
     -- CRUSHING: Entro crystal -> Entro dust (LOW PRIORITY)
     -- ============================================
     Forget
-        if Barrel has gt 32 extendedae:entro_crystal then
-            if Barrel has lt 100000 extendedae:entro_dust then
+        if Barrel has > 32 extendedae:entro_crystal then
+            if Barrel has < 100000 extendedae:entro_dust then
                 Input extendedae:entro_crystal from Barrel
                 Output to each Crusher top side
             end
