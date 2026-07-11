@@ -2,29 +2,78 @@
 
 Super Factory Manager (SFM) automation scripts for **All The Mods 10 - To The Sky (ATM10TTS)**.
 
-## Scripts
+## Folder Structure
 
-### [`inscriber_automation.sfm`](inscriber_automation.sfm)
-AE2 Inscriber automation for all processor types:
-- Printed Silicon, Logic, Calculation, Engineering circuits
-- Logic, Calculation, Engineering, Concurrent processors
-- Power distribution and auto-extraction
+```
+├── codes/
+│   ├── my-codes/           # My own SFM scripts
+│   │   ├── inscriber_automation.sfm
+│   │   ├── fluix_entro_crystal_automation.sfm
+│   │   └── chamber_automation.sfm
+│   └── other-creators/     # Scripts from other creators
+│       └── energizing_orb_automation.sfm  (credit: The Voos)
+├── documentation/
+│   └── sfm_ae2_guide.md    # SFM + AE2 syntax reference
+├── README.md
+└── LICENSE
+```
+
+## My Codes
+
+### [`codes/my-codes/inscriber_automation.sfm`](codes/my-codes/inscriber_automation.sfm)
+AE2 Inscriber automation using **`else if` chains** — only one print/assembly job per cycle.
+
+| Priority | Recipe | Machine |
+|----------|--------|---------|
+| 1 | Printed Silicon | Print_Inscriber |
+| 2 | Printed Logic Circuit | Print_Inscriber |
+| 3 | Printed Calculation Circuit | Print_Inscriber |
+| 4 | Printed Engineering Circuit | Print_Inscriber |
+| 5 | Printed Concurrent Circuit | Print_Inscriber |
+| 6 | Logic Processor | Assembly_Inscriber |
+| 7 | Calculation Processor | Assembly_Inscriber |
+| 8 | Engineering Processor | Assembly_Inscriber |
+| 9 | Concurrent Processor | Assembly_Inscriber |
 
 **Labels:** `Inscriber`, `Print_Inscriber`, `Assembly_Inscriber`, `Barrel`, `EnderCell`
 
-### [`fluix_entro_crystal_automation.sfm`](fluix_entro_crystal_automation.sfm)
-Reaction Chamber + Crusher automation for crystal production with multiplication loop:
+### [`codes/my-codes/fluix_entro_crystal_automation.sfm`](codes/my-codes/fluix_entro_crystal_automation.sfm)
+Reaction Chamber + Crusher automation with **`else if` chain** — only one recipe per cycle.
 
-| Recipe | Input | Output |
-|--------|-------|--------|
-| Charge Certus | 64× Certus Quartz Crystal | Charged Certus Quartz Crystal |
-| Recover Certus | 16× Charged Certus + 16× Certus Dust | 64× Certus Quartz Crystal |
-| Fluix Crystal | 32× Fluix Dust + 32× Charged Certus | Fluix Crystal |
-| Entro Crystal | 32× Entro Dust + 32× Fluix Crystal | Entro Crystal |
+| Priority | Recipe | Input | Retain |
+|----------|--------|-------|--------|
+| 1 | Certus Recovery | 16× Charged Certus + 16× Certus Dust | slots 0-1 |
+| 2 | Charge Certus | 64× Certus Quartz Crystal | slot 0 |
+| 3 | Fluix Crystal | 32× Fluix Dust + 32× Charged Certus | slots 0-1 |
+| 4 | Entro Crystal | 32× Entro Dust + 32× Fluix Crystal | slots 0-1 |
 
 Crushing loop: excess crystals → Crusher → dust → Reaction Chamber → more crystals.
+All caps: **100,000** items.
 
 **Labels:** `ReactionChamber`, `Crusher`, `Barrel`, `EnderCell`, `Sink`
+
+### [`codes/my-codes/chamber_automation.sfm`](codes/my-codes/chamber_automation.sfm)
+Generic chamber processor — takes 9 items, extracts `source_gem` outputs.
+
+**Labels:** `Chamber`, `Barrel`
+
+## Other Creators' Codes
+
+### [`codes/other-creators/energizing_orb_automation.sfm`](codes/other-creators/energizing_orb_automation.sfm)
+Energizing Orb automation — **credit: The Voos (YouTube)**. Uses `If`/`Else If` chain.
+
+| Recipe | Input |
+|--------|-------|
+| Ender Core | ender_eye + dielectric_casing + capacitor_basic_tiny |
+| Charged Certus | certus_quartz_crystal |
+| Energized Steel | iron_ingot + gold_ingot |
+| Blaze Powder | 4× blaze_powder |
+| Blaze Rod | blaze_rod |
+| Niotic Crystal | diamond |
+| Spirited Crystal | emerald |
+| Nitro Crystal | nether_star + 2× redstone_block + blazing_crystal_block |
+
+**Labels:** `Orb`, `Barrel`
 
 ## Requirements
 
@@ -41,44 +90,21 @@ Crushing loop: excess crystals → Crusher → dust → Reaction Chamber → mor
 4. Ensure power (FE) is connected to your EnderCell
 5. For Fluix/Entro: place a Sink (Cooking for Blockheads) next to water for the Reaction Chamber
 
-## Labels Reference
+## SFM Syntax Notes
 
-### Inscriber Automation
-| Label | Machine | Notes |
-|-------|---------|-------|
-| `Barrel` | Storage container | All items in/out |
-| `EnderCell` | Power source | FE input |
-| `Inscriber` | ALL inscribers | Power only |
-| `Print_Inscriber` | Inscribers WITH Universal Press | Slot 0 has press |
-| `Assembly_Inscriber` | Inscribers WITHOUT press | Processor assembly |
+Key lessons learned from the [official SFM examples](https://github.com/TeamDman/SuperFactoryManager):
 
-### Crystal Automation
-| Label | Machine | Notes |
-|-------|---------|-------|
-| `Barrel` | Storage container | All items in/out |
-| `EnderCell` | Power source | FE input |
-| `ReactionChamber` | Reaction Chamber(s) | Crystal production |
-| `Crusher` | Crusher(s) | Crystal → Dust |
-| `Sink` | Sink (Cooking for Blockheads) | Water source |
+- **`else if` chains** — ensures only ONE recipe runs per cycle (cleaner than multiple Forget blocks)
+- **`"redstone"`** — must be quoted because `redstone` is an SFM keyword
+- **Keywords are case insensitive** — `if`/`If`/`IF` all work
+- **`retain`** — works on both input (`input retain N`) and output (`output retain N`)
+- **`each`** — distributes across all labeled inventories
+- **Valid sides** — `top`, `bottom`, `north`, `south`, `east`, `west` (no `back`)
 
-## Slot Layout (Reaction Chamber)
+## Contributing
 
-All recipes share slots 0 and 1 to ensure only one recipe type runs at a time:
-- Slot 0: Primary ingredient
-- Slot 1: Secondary ingredient (if applicable)
-- Slot 10: Output (extracted via bottom side)
+Pull requests welcome! If you have SFM automation scripts for ATM10TTS, feel free to add them under `codes/other-creators/` with credit.
 
-Crusher input via top side, output extracted via bottom side.
+## License
 
-## Caps
-
-All items capped at **100,000** (100k) to prevent overflow. Adjust `lt 100000` values in the code to change.
-
-## Notes
-
-- SFM processes items every 30 ticks (1.5 seconds)
-- Each recipe has its own `Forget` block for mutual exclusion
-- `retain` ensures exact item counts in machine slots
-- Nested `if` statements used instead of `and` (SFM `and`/`or` precedence is unreliable)
-- `has` conditions use `mod:item` format (e.g., `ae2:fluix_dust`)
-- Extraction happens at END of cycle to prevent mixed-recipe clogging
+MIT — see [LICENSE](LICENSE)
