@@ -78,6 +78,18 @@ Every 30 ticks do
         end
 
     -- ============================================
+    -- CRUSHING: Certus crystal -> Certus dust
+    -- Needed for Certus Recovery recipe (highest priority production)
+    -- ============================================
+    Forget
+        if Barrel has > 32 ae2:certus_quartz_crystal then
+            if Barrel has < 100000 ae2:certus_quartz_dust then
+                Input ae2:certus_quartz_crystal from Barrel
+                Output to each Crusher top side
+            end
+        end
+
+    -- ============================================
     -- CRUSHING: Entro crystal -> Entro dust (LOW PRIORITY)
     -- ============================================
     Forget
