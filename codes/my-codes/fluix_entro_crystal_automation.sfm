@@ -17,10 +17,17 @@ Every 30 ticks do
     Input fluid:: from Sink
     Output fluid:: to ReactionChamber
 
+    -- REQUIRED: Extract ALL items from chambers BEFORE production
+    -- Ensures chambers are completely empty before new recipe items go in
+    -- Prevents mixed-recipe clogging and slowdowns
+    Input from each ReactionChamber bottom side
+    Input from each Crusher bottom side
+    Output to Barrel
+
     -- ============================================
     -- CRYSTAL PRODUCTION — Else If chain ensures only ONE recipe per cycle
     -- Priority: Certus Recovery > Charge Certus > Fluix > Entro
-    -- All use slots 0-1, no conflicts since only one runs at a time
+    -- Chambers are empty at this point (extracted above)
     -- ============================================
     Forget
         -- CERTUS QUARTZ CRYSTAL (Recover from charged + dust) — PRIORITY
@@ -81,11 +88,4 @@ Every 30 ticks do
             end
         end
 
-    -- ============================================
-    -- EXTRACTION: Pull finished products at END of cycle
-    -- ============================================
-    Forget
-        Input from each ReactionChamber bottom side
-        Input from each Crusher bottom side
-        Output to Barrel
 End
