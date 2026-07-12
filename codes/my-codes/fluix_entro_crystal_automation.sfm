@@ -10,9 +10,9 @@ Every tick do
 End
 
 -- ============================================
--- ITEMS: Process every 30 ticks (1.5 seconds)
+-- ITEMS: Process every 20 ticks (1 second)
 -- ============================================
-Every 30 ticks do
+Every 20 ticks do
     -- FLUID: Provide water to Reaction Chamber from Sink
     Input fluid:: from Sink
     Output fluid:: to ReactionChamber
